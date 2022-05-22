@@ -5,7 +5,7 @@
 # it will open up in browser
 # then type name click login, this will trigger code below
 
-from flask import Flask, redirect, url_for, request
+from flask import Flask, redirect, url_for, request, render_template
 app = Flask(__name__)
 
 @app.route('/')
