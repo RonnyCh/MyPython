@@ -3,18 +3,18 @@
    <body>
       <table border = 1>
          <thead>
-            <td>Category</td>
-            <td>Fcast</td>
-            <td>Actual</td>
-            <td>Variance</td>
+            <td>name</td>
+            <td>addr</td>
+            <td>city</td>
+            <td>pin</td>
          </thead>
          
          {% for row in rows %}
             <tr>
-               <td>{{row["Category"]}}</td>
-               <td>{{row["Fcast"]}}</td>
-               <td> {{ row["Actual"]}}</td>
-               <td>{{row['Variance']}}</td>	
+               <td>{{row["name"]}}</td>
+               <td>{{row["addr"]}}</td>
+               <td> {{ row["city"]}}</td>
+               <td>{{row['pin']}}</td>	
             </tr>
          {% endfor %}
       </table>

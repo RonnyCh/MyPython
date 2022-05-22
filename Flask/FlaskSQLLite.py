@@ -23,24 +23,18 @@ def student():
             con.commit()
             msg = "Record successfully added"
 
-         return render_template('list.html')
+         
       except:
          return 'you have errors'
       finally:
-         return render_template('result.html',msg=msg)
+         con = sql.connect('database.db')
+         con.row_factory = sql.Row 
+         cur = con.cursor()
+         cur.execute("select * from students")
+         rows = cur.fetchall(); 
+         return render_template("list.html",rows = rows)
 
 
-
-@app.route('/list')
-def list():
-   con = sql.connect(r'c:\Users\r.christianto\SQLiteStudio\mydatabase')
-   con.row_factory = sql.Row
-   
-   cur = con.cursor()
-   cur.execute("select * from variance_overall limit 100")
-   
-   rows = cur.fetchall(); 
-   return render_template("list.html",rows = rows)
 
 
 if __name__ == '__main__':
