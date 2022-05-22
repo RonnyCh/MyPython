@@ -7,7 +7,7 @@ app = Flask(__name__)
 def home():
    return render_template('student.html')
 
-
+# do some sqls
 @app.route('/student',methods = ['POST', 'GET'])
 def student():
    if request.method == 'POST':
@@ -19,6 +19,7 @@ def student():
 
          with sql.connect("database.db") as con:
             cur = con.cursor()
+            cur.execute("delete from students where name is null or name = ''")
             cur.execute("INSERT INTO students (name,addr,city,pin) VALUES (?,?,?,?)",(nm,addr,city,pin) )
             con.commit()
             msg = "Record successfully added"
@@ -35,6 +36,10 @@ def student():
          return render_template("list.html",rows = rows)
 
 
+# pass to another html
+@app.route('/hello')
+def hello():
+   return render_template('hello.html')
 
 
 if __name__ == '__main__':
