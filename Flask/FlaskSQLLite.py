@@ -33,11 +33,11 @@ def student():
 
 @app.route('/list')
 def list():
-   con = sql.connect("database.db")
+   con = sql.connect(r'c:\Users\r.christianto\SQLiteStudio\mydatabase')
    con.row_factory = sql.Row
    
    cur = con.cursor()
-   cur.execute("select * from students")
+   cur.execute("select * from variance_overall limit 100")
    
    rows = cur.fetchall(); 
    return render_template("list.html",rows = rows)
