@@ -32,14 +32,20 @@ def student():
          con.row_factory = sql.Row 
          cur = con.cursor()
          cur.execute("select * from students")
+         global rows
          rows = cur.fetchall(); 
-         return render_template("list.html",rows = rows)
+         #return render_template("list.html",rows = rows)
+         return render_template('student.html')
 
 
 # pass to another html
-@app.route('/hello')
+@app.route('/Student')
 def hello():
-   return render_template('hello.html')
+   return render_template('Student.html')
+
+@app.route('/list')
+def list():
+   return render_template('list.html',rows=rows)
 
 
 if __name__ == '__main__':
