@@ -11,14 +11,18 @@
          Amount<br>
          <input type = "number" name = "amt" /><br>
          
-         Interval<br>
+         Interval (Blank for One-off)<br>
          <input type = "text" name = "interval" /><br>
          
          EndDate<br>
          <input type = "date" name = "end" /><br>
-         
+                
          Category<br>
-         <input type = "text" name = "cat" /><br>
+         <input type = "text" name = "cat" list="mycat">
+            <datalist id="mycat">
+               <option value="Boston">
+               <option value="Cambridge">
+            </datalist>
 
          <input type = "submit" value = "Submit" /><br>
       </form>
