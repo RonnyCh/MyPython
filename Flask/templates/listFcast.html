@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+   <body>
+      <table border = 1>
+         <thead>
+            <td>Date</td>
+            <td>Description</td>
+            <td>Amount</td>
+            <td>interval</td>
+            <td>lastday</td>
+            <td>category</td>
+         </thead>
+         
+         {% for row in rows %}
+            <tr>
+               <td>{{row["Date"]}}</td>
+               <td>{{row["Description"]}}</td>
+               <td> {{ row["Amount"]}}</td>
+               <td>{{row['interval']}}</td>	
+               <td>{{row['lastday']}}</td>	
+               <td>{{row['category']}}</td>	
+            </tr>
+         {% endfor %}
+      </table>
+      
+      <a href = "/">Go Back</a>
+   </body>
+</html>
