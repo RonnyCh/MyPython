@@ -6,6 +6,7 @@ from pandas import Series, DataFrame
 from sklearn import preprocessing
 import matplotlib.pyplot as plt
 from datetime import date, timedelta
+import datetime
 import yfinance as yf
 
 pd.set_option('mode.chained_assignment',None)    # turn off chain error warning since I use loc function properly
