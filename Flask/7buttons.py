@@ -29,8 +29,9 @@ def mybutton():
       else:
          # this will create a dataframe
          global df
-         list = [1,2,3,4,5]
-         df = pd.DataFrame({'B':list})
+         name = ['Ron','Ch','Mercy','Mimi','VB']
+         score = [1,2,3,4,5]
+         df = pd.DataFrame({'Name':name,'Score':score})
          df.to_csv('test2.csv')
          return redirect(url_for('status2'))
 
@@ -53,7 +54,7 @@ def status1():
 @app.route('/button2')
 def status2():
    # note the return must be string, dict or tuples
-   return df.to_string()
+   return df.to_html(header="true",index=False)
 
 
 if __name__ == '__main__':
