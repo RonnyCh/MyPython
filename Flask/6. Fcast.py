@@ -1,3 +1,8 @@
+
+
+# use this one for forecasting input table linked to SQLlite
+
+
 from flask import Flask, render_template, request
 import sqlite3 as sql
 app = Flask(__name__)
@@ -21,7 +26,7 @@ def student():
 
          with sql.connect("database.db") as con:
             cur = con.cursor()
-            cur.execute("delete from parm_tbl_fcast where date is null or date = ''")
+            cur.execute("delete from parm_tbl_fcast where date is null or date = ''")  # clean up blank data/unnecesary ones
             cur.execute("INSERT INTO parm_tbl_fcast VALUES (?,?,?,?,?,?)",(mystart,mydesc,myamt,myinterval,myend,mycat) )
             con.commit()
             msg = "Record successfully added"
