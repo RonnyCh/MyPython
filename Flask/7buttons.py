@@ -6,6 +6,9 @@
 # this 
 
 import pandas as pd
+import base64
+from io import BytesIO
+from matplotlib.figure import Figure
 from flask import Flask, render_template,request, redirect, url_for
 app = Flask(__name__)
 
@@ -21,21 +24,37 @@ def mybutton():
       me = request.form['button']
 
       if me == 'submit1':
-         # do some python codes
-         list = [1,2,3,4,5]
-         df = pd.DataFrame({'A':list})
-         df.to_csv('test1.csv')
-         return redirect(url_for('status',name = 'button 1 executed'))
+         # this will send to matplotlib pyhon codes
+         return redirect(url_for('status1'))
       else:
+         # this will create a dataframe
+         global df
          list = [1,2,3,4,5]
          df = pd.DataFrame({'B':list})
          df.to_csv('test2.csv')
-         return redirect(url_for('status',name = 'button 2 executed'))
+         return redirect(url_for('status2'))
 
 
-@app.route('/success/<name>')
-def status(name):
-   return '>>>>>>>> %s' % name
+@app.route('/button1')
+def status1():
+    # Matplotlib method in FLASK**.
+    fig = Figure()
+    ax = fig.subplots()
+    mylist = [10,20,13,20,10,50,20]
+    ax.plot(mylist)
+    # Save it to a temporary buffer.
+    buf = BytesIO()
+    fig.savefig(buf, format="png")
+    # Embed the result in the html output.
+    data = base64.b64encode(buf.getbuffer()).decode("ascii")
+    return f"<img src='data:image/png;base64,{data}'/>"
+    #return list
+
+@app.route('/button2')
+def status2():
+   # note the return must be string, dict or tuples
+   return df.to_string()
+
 
 if __name__ == '__main__':
    app.run(debug=True)

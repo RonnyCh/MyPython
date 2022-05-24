@@ -1,6 +1,6 @@
 import base64
 from io import BytesIO
-
+from matplotlib.figure import Figure
 from flask import Flask
 from matplotlib.figure import Figure
 
@@ -12,7 +12,7 @@ def hello():
     # Generate the figure **without using pyplot**.
     fig = Figure()
     ax = fig.subplots()
-    ax.plot([1, 2,7,4,8,9])
+    ax.plot([1,2,7,4,8,9])
     # Save it to a temporary buffer.
     buf = BytesIO()
     fig.savefig(buf, format="png")
