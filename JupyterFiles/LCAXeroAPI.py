@@ -185,7 +185,7 @@ for mytenant in mytenants:
         for j in i['ReportTitles']:
             if 'Trial' not in j and 'As at' not in j:
                 clinicname = j
-                print ("Processing Clinic " + j)
+                
 
     # get Values from JSON API
     mycell = []
@@ -210,10 +210,10 @@ for mytenant in mytenants:
                             myrow.append(l3['Value'])
                             mycell.append(myrow)
 
-    
     # create draft dataframe            
     df = pd.DataFrame(mycell)
     df.columns = ['Section','Desc','Dr','Cr','YTD Dr','YTD Cr']
+    print ("This Clinic Completed >>> " + clinicname)
      
     # add additional information to dataframe
     df['XRO_Clinic'] = clinicname
