@@ -77,7 +77,7 @@ response = requests.get(url,
 if str(response) != '<Response [200]>':
     print ('********* Token Error **********')
 else:
-    print ('********* Token Good **********')
+    print ('********* Token Exchanged Successfully **********')
 
 ####################################################
 
@@ -138,6 +138,11 @@ def mydesc(a):
         n = a.find('(')
         return a[:n].strip()
 
+def amt(section,mtd,ytd):
+            if section == 'Revenue' or section == 'Expenses':
+                return mtd
+            else:
+                return ytd
 ################################################
 
 ############ get list of tenants ################
@@ -156,7 +161,7 @@ for i in myjson:
 
 
 # let's test just 2 clinics  , you can delete this code later
-mytenants = mytenants[:25]
+mytenants = mytenants[54:60]
 
 
 ############ put parameter for month ##############
@@ -169,7 +174,10 @@ url = 'https://api.xero.com/api.xro/2.0/Reports/TrialBalance?date='+mymonth+'&pa
 
 
 ######### Get JSON API for each tenant ############
-for mytenant in mytenants:
+
+total = len(mytenants)
+
+for index,mytenant in enumerate(mytenants):
     response = requests.get(url,
             headers={
            'Authorization' : 'Bearer '+access_token,
@@ -185,6 +193,7 @@ for mytenant in mytenants:
         for j in i['ReportTitles']:
             if 'Trial' not in j and 'As at' not in j:
                 clinicname = j
+                
                 
 
     # get Values from JSON API
@@ -211,28 +220,40 @@ for mytenant in mytenants:
                             mycell.append(myrow)
 
     # create draft dataframe            
-    df = pd.DataFrame(mycell)
-    df.columns = ['Section','Desc','Dr','Cr','YTD Dr','YTD Cr']
-    print ("This Clinic Completed >>> " + clinicname)
-     
-    # add additional information to dataframe
-    df['XRO_Clinic'] = clinicname
-    df['GBL_Period'] = mymonth
-    df['XRO_Account'] = df['Desc'].apply(lambda x:myacct(x))
-    df['Description'] = df['Desc'].apply(lambda x:mydesc(x))
-    
-    # convert to numeric, fill na and do calc
-    df['YTD Dr'] = pd.to_numeric(df['YTD Dr'],errors='coerce')
-    df['YTD Cr'] = pd.to_numeric(df['YTD Cr'],errors='coerce')
-    df['YTD Dr'].fillna(0,inplace=True)
-    df['YTD Cr'].fillna(0,inplace=True)
-    df['Amount'] =  df['YTD Dr'] - df['YTD Cr']
+    if mycell != []:
+        df = pd.DataFrame(mycell)
+        df.columns = ['Section','Desc','Dr','Cr','YTD Dr','YTD Cr']
+        print (index,total,clinicname)
+        
+        # add additional information to dataframe
+        df['XRO_Clinic'] = clinicname
+        df['GBL_Period'] = mymonth
+        df['XRO_Account'] = df['Desc'].apply(lambda x:myacct(x))
+        df['Description'] = df['Desc'].apply(lambda x:mydesc(x))
+        
+        # convert to numeric, fill na and do calc
+        df['Dr'] = pd.to_numeric(df['Dr'],errors='coerce')
+        df['Cr'] = pd.to_numeric(df['Cr'],errors='coerce')
+        df['YTD Dr'] = pd.to_numeric(df['YTD Dr'],errors='coerce')
+        df['YTD Cr'] = pd.to_numeric(df['YTD Cr'],errors='coerce')
+        df['Dr'].fillna(0,inplace=True)
+        df['Cr'].fillna(0,inplace=True)
+        df['YTD Dr'].fillna(0,inplace=True)
+        df['YTD Cr'].fillna(0,inplace=True)
+        df['MTD'] =  df['Dr'] - df['Cr']
+        df['YTD'] =  df['YTD Dr'] - df['YTD Cr']
+        df['Amount'] = df.apply(lambda x:amt(x.Section,x.MTD,x.YTD),axis=1)
 
-    # final dataframe
-    df = df[['GBL_Period','XRO_Clinic','Section','Desc','XRO_Account','Description','Dr','Cr','YTD Dr','YTD Cr','Amount']]
-    #df.to_csv(clinicname+'.csv',index=False)
-    final = final.append(df)
-######################################################   
+       
+
+
+        # final dataframe
+        df = df[['GBL_Period','XRO_Clinic','Section','Desc','XRO_Account','Description','Dr','Cr','YTD Dr','YTD Cr','Amount']]
+        #df.to_csv(clinicname+'.csv',index=False)
+        final = final.append(df)
+    else:
+        print (index,total,clinicname + ' *** Warning - No Data *** ')
+    ######################################################   
 
 # remove duplicates in pandas, need to check later why there are duplicates #
 final = final.drop_duplicates()
@@ -246,5 +267,3 @@ tm1 = final[['XRO_Clinic','XRO_Account','Amount']]
 tm1.to_csv('TM1.csv',index=False)
 final.to_csv('Xero.csv',index=False)
 print ("Process Completed!!!!!!!")
-
-
