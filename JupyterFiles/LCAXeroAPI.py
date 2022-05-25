@@ -161,7 +161,7 @@ for i in myjson:
 
 
 # let's test just 2 clinics  , you can delete this code later
-mytenants = mytenants[54:60]
+#mytenants = mytenants[54:60]
 
 
 ############ put parameter for month ##############
