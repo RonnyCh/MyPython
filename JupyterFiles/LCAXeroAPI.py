@@ -7,6 +7,12 @@ import os
 import json
 import pandas as pd
 import base64
+import warnings
+# turn off pandas warning
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
+
+mymonth = input('YYYY-MM-DD  >>') #### setup your date here before running #######
 
 client_id = 'B628C81B8827482AAC0E3E7BA73676F2'     # LCA REZA API
 client_secret = 'fUr9qANQNTne6sXMaCoXzGzHty3i1dE2sVJe8iWFAUDUpehe'    # Reza API
@@ -67,7 +73,11 @@ response = requests.get(url,
            headers={
                'Authorization' : 'Bearer '+access_token,
                'Accept' : 'application/json'})
-json.loads(response.text)
+
+if str(response) != '<Response [200]>':
+    print ('********* Token Error **********')
+else:
+    print ('********* Token Good **********')
 
 ####################################################
 
@@ -146,13 +156,13 @@ for i in myjson:
 
 
 # let's test just 2 clinics  , you can delete this code later
-#mytenants = mytenants[:10]
+mytenants = mytenants[:25]
 
 
 ############ put parameter for month ##############
 ########## Change URL for TRIAL BALANCE ###########
 
-mymonth = '2022-10'
+
 url = 'https://api.xero.com/api.xro/2.0/Reports/TrialBalance?date='+mymonth+'&paymentsOnly=false'
 
 ###################################################
@@ -175,6 +185,7 @@ for mytenant in mytenants:
         for j in i['ReportTitles']:
             if 'Trial' not in j and 'As at' not in j:
                 clinicname = j
+                print ("Processing Clinic " + j)
 
     # get Values from JSON API
     mycell = []
@@ -200,10 +211,10 @@ for mytenant in mytenants:
                             mycell.append(myrow)
 
     
-    # create draft dataframe                
+    # create draft dataframe            
     df = pd.DataFrame(mycell)
     df.columns = ['Section','Desc','Dr','Cr','YTD Dr','YTD Cr']
-
+     
     # add additional information to dataframe
     df['XRO_Clinic'] = clinicname
     df['GBL_Period'] = mymonth
@@ -234,8 +245,6 @@ tm1 = final[['XRO_Clinic','XRO_Account','Amount']]
 #tm1['GBL_Reporting_Currency'] = 'Local'
 tm1.to_csv('TM1.csv',index=False)
 final.to_csv('Xero.csv',index=False)
-
-
-
+print ("Process Completed!!!!!!!")
 
 
