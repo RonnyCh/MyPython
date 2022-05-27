@@ -45,7 +45,8 @@ for i in range(len(list)):
         y = int(list[i][2])
         duration = list[i][5]
         print (x,y,duration)
-        s.moveTo(x,y,duration)
+        s.moveTo(x,y,1)
+        time.sleep(duration)
         # pause to let web refresh etc
         #time.sleep(duration)
        
