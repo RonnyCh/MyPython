@@ -17,14 +17,20 @@ for i in range(len(list)):
         y = int(list[i][2])
         button = list[i][3]
         duration = list[i][5]
-        s.moveTo(x,y,duration)
-        # pause to let web refresh etc
-        #time.sleep(duration)
-        s.click(button=button)
-        
+	
+        if duration > 1:
+            # if duration greater that 1 seconds, just limit the move to 1 second. Otherwise too slow!
+            s.moveTo(x,y,1)
+            time.sleep(duration)
+            s.click(button=button)
+        else:
+            s.moveTo(x,y,duration)
+            s.click(button=button)
+            
         #time.sleep(0.9)
     elif 'Write' in list[i][0]:
-        s.write(list[i][1],0.1)
+        duration = list[i][5]
+        s.write(list[i][1],duration)
     elif 'Key' in list[i][0]:
         
         # some of the names need to be changed for pyautogui
