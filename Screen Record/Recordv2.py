@@ -6,6 +6,7 @@ import time
 import pandas as pd
 import pyautogui as s
 
+orig_list = []
 newlist = []
 
 # give a few seconds for user to setup 
@@ -16,16 +17,19 @@ s.alert(text='', title='', button='Start recording, press esc to end')
 
 def on_click(x, y, button, pressed):
     if pressed:
+        orig_list.append([x,y,button,"pressed"])   # record original list
         if 'left' in str(button):
             button = 'left'
         else:
             button = 'right'
         newlist.append(['Click',x,y,button,time.time()])
     elif not pressed and newlist != []:
+        orig_list.append([x,y,button,"not pressed"])
         # if last x,y when pressing different to when release, meaning dragging
         if newlist[-1][1] != x or newlist[-1][2] != y:
             
             newlist[-1][0] = 'MoveTo'
+            x = newlist[-1][1]  # keep x the same for dragging
             if 'left' in str(button):
                 button = 'left'
             else:
@@ -34,7 +38,8 @@ def on_click(x, y, button, pressed):
         
         
 def on_release(key):
-         
+
+    orig_list.append([key])     
     if 'Key' in str(key):
          mykey = str(key)[4:len(str(key))]
          newlist.append(['Key',mykey,'None','None',time.time()])    
@@ -59,6 +64,14 @@ df = pd.DataFrame(newlist, columns = ['Event','X', 'Y','Button','Time'])
 df['TimeDiff'] = df['Time'].diff(1)
 df = df.fillna(0) # first row of diff will na, so just put zero
 df.to_csv(r"C:\Users\r.christianto\MyPython\Screen Record\record.csv",index=False)
+
+# record original list
+with open(r"C:\Users\r.christianto\MyPython\Screen Record\mylist.txt","w") as file:
+    # write elements of list
+    for item in orig_list:
+        file.write('%s\n' %item)
+file.close()
+
 
 
 s.alert(text='', title='', button='Recording finished')
