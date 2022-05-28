@@ -1,8 +1,10 @@
 import pyautogui as s
 import pandas as pd
 import time
+from pynput.mouse import Button, Controller
 
 s.alert(text='', title='', button='Press OK to Replay')
+
 
 df = pd.read_csv(r"C:\Users\r.christianto\MyPython\Screen Record\record.csv")
 df = df[:-1]
@@ -10,6 +12,8 @@ df = df[:-1]
 #df['Y'] = df['Y'].astype(int)
 
 list = df.values.tolist()
+
+mouse = Controller()
 
 for i in range(len(list)):
     if 'Click' in list[i][0]:
@@ -27,7 +31,14 @@ for i in range(len(list)):
             s.moveTo(x,y,duration)
             s.click(button=button)
             
-        #time.sleep(0.9)
+    # new move code from mouse controller instead    
+    elif 'Move' in list[i][0]:
+        x = list[i][1]
+        y = list[i][2]
+        mouse.position = (x,y)
+        time.sleep(0.02)
+
+
     elif 'Write' in list[i][0]:
         duration = list[i][5]
         s.write(list[i][1],duration)

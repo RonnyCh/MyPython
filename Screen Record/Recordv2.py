@@ -13,7 +13,9 @@ newlist = []
 s.alert(text='', title='', button='Start recording, press esc to end')
 
 
-   
+def on_move(x,y):
+    newlist.append(['Move',x,y,'',time.time()])   
+    print (x,y)
 
 def on_click(x, y, button, pressed):
     if pressed:
@@ -54,7 +56,7 @@ def on_release(key):
 
 # Collect events until released
 with keyboard.Listener(on_release=on_release) as k_listener, \
-        mouse.Listener(on_click=on_click) as m_listener:
+        mouse.Listener(on_click=on_click,on_move=on_move) as m_listener:
     k_listener.join()
     m_listener.join()
 
