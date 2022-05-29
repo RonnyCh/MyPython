@@ -1,71 +1,53 @@
-import pyautogui as s
+
+
+############# working with pyautogui writing ###########
+
+# replay
+import pyautogui as s 
 import pandas as pd
 import time
 from pynput.mouse import Button, Controller
 
-s.alert(text='', title='', button='Press OK to Replay')
+x = s.prompt('Enter Filename to Replay')
+x = x + '.csv'
 
-
-df = pd.read_csv(r"C:\Users\r.christianto\MyPython\Screen Record\record.csv")
-df = df[:-1]
-#df['X'] = df['X'].astype(int)
-#df['Y'] = df['Y'].astype(int)
-
-list = df.values.tolist()
-
+df = pd.read_csv(x)
+mylist = df.values.tolist()
 mouse = Controller()
 
-for i in range(len(list)):
-    if 'Click' in list[i][0]:
-        x = int(list[i][1])
-        y = int(list[i][2])
-        button = list[i][3]
-        duration = list[i][5]
-	
-        if duration > 1:
-            # if duration greater that 1 seconds, just limit the move to 1 second. Otherwise too slow!
-            s.moveTo(x,y,1)
-            time.sleep(duration)
-            s.click(button=button)
-        else:
-            s.moveTo(x,y,duration)
-            s.click(button=button)
-            
-    # new move code from mouse controller instead    
-    elif 'Move' in list[i][0]:
-        x = list[i][1]
-        y = list[i][2]
-        mouse.position = (x,y)
-        time.sleep(0.02)
 
+for i in range(len(mylist)):
+    action = mylist[i][0]
+    x = mylist[i][1]
+    y = mylist[i][2]
+    add_action = mylist[i][3]
 
-    elif 'Write' in list[i][0]:
-        duration = list[i][5]
-        s.write(list[i][1],duration)
-    elif 'Key' in list[i][0]:
+    if 'Move' in action:
         
-        # some of the names need to be changed for pyautogui
-        if list[i][1] == 'page_down':
-            list[i][1] = 'pgdn'
-        elif list[i][1] == 'page_up':
-            list[i][1] = 'pgup'
-        s.press(list[i][1])
-        time.sleep(0.5)
-    elif 'MoveTo' in list[i][0]:
-        x = int(list[i][1])
-        y = int(list[i][2])
-        duration = list[i][5]
-        print (x,y,duration)
-        s.moveTo(x,y,1)
-        time.sleep(duration)
-        # pause to let web refresh etc
-        #time.sleep(duration)
-       
-    elif 'DragTo' in list[i][0]:
-        x = int(list[i][1])
-        y = int(list[i][2])
-        duration = list[i][5]
-       
-        s.dragTo(x,y,duration)
+        mouse.position = (x,y)
+        time.sleep(0.025)
+    elif 'press' in action:
+        
+        mouse.press(Button.left)
+    elif 'release' in action:
+        mouse.release(Button.left)
+    elif 'Char' in action:
+        s.write(x)  
+        # need to add other keys
+    elif 'Key' in action:
+        x = str(x)[4:]
 
-s.alert("Replay completed")
+        # change some of the names for pyautogui
+        if x == 'page_down':
+            x = 'pgdn'
+        elif x == 'page_up':
+            x = 'pgup'
+        print (x)
+        s.press(x)  
+        time.sleep(0.15)
+        # need to add other keys
+    elif 'Scroll' in action:  
+        print (add_action)
+        mouse.scroll(0,int(add_action))
+        time.sleep(0.7)
+

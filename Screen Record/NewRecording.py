@@ -1,5 +1,15 @@
 
 
+######################################################## 
+####      Record the steps
+####      Please note, threading takes a while 
+####      so give a few seconds before starting 
+####      moving and record
+####      Will prompt file save name
+########################################################
+
+
+
 from pynput import mouse
 from pynput import keyboard
 import time
@@ -63,13 +73,19 @@ df.to_csv(x,index=False)
 
 
 
+######################################################## 
+####      Replay , use pyautogui for keyboard
+####      Will prompt which file to open
+########################################################
 
-############# working with pyautogui writing ###########
-
-# replay
 import pyautogui as s 
 import pandas as pd
+import time
 from pynput.mouse import Button, Controller
+
+x = s.prompt('Enter Filename to Replay')
+x = x + '.csv'
+
 
 df = pd.read_csv(x)
 mylist = df.values.tolist()
@@ -102,6 +118,9 @@ for i in range(len(mylist)):
             x = 'pgdn'
         elif x == 'page_up':
             x = 'pgup'
+        elif x == 'ctrl_l':
+            x = 'ctrl'
+
         print (x)
         s.press(x)  
         time.sleep(0.15)
