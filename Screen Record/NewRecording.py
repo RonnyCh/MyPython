@@ -6,7 +6,8 @@ import time
 import pandas as pd
 import pyautogui as s
 
-
+x = s.prompt('Enter Filename')
+x = x + '.csv'
 
 newlist = []
 
@@ -33,14 +34,14 @@ def on_click(x, y, button, pressed):
 def on_press(key):
     try:
         print ('Press Char',key.char)       
-        newlist.append(['Keyboard enter',key.char,'','']) 
+        newlist.append(['Char',key.char,'','']) 
     except:
         print ('Press',key)    
-        newlist.append(['Keyboard exit',key,'','']) 
+        newlist.append(['Key',key,'','']) 
 
 def on_release(key):
     print ('Release',key)
-    newlist.append(['Keyboard exit',key,'','']) 
+    newlist.append(['Release',key,'','']) 
         
     # if users press esc, stop mouse recording as well as keyboard    
     if key == keyboard.Key.esc:
@@ -58,17 +59,20 @@ with keyboard.Listener(on_release=on_release,on_press=on_press) as k_listener, \
 df = pd.DataFrame(newlist)
 df.columns = ['Action','X','Y','ButtonOrScroll']
 
-df.to_csv('test.csv')
+df.to_csv(x,index=False)
 
 
 
 
-
+############# working with pyautogui writing ###########
 
 # replay
 import pyautogui as s 
+import pandas as pd
+from pynput.mouse import Button, Controller
+
+df = pd.read_csv(x)
 mylist = df.values.tolist()
-keyboard = Controller()
 mouse = Controller()
 
 
@@ -77,28 +81,33 @@ for i in range(len(mylist)):
     x = mylist[i][1]
     y = mylist[i][2]
     add_action = mylist[i][3]
-    print (action,'first')
-    
 
     if 'Move' in action:
         
         mouse.position = (x,y)
-        time.sleep(0.02)
+        time.sleep(0.01)
     elif 'press' in action:
         
         mouse.press(Button.left)
     elif 'release' in action:
         mouse.release(Button.left)
-    elif 'enter' in action:
-        s.write(x)  # use pyautogui since keyboard module having issue
-    elif 'Scroll' in action:
-        mouse.scroll(0,add_action)
+    elif 'Char' in action:
+        s.write(x)  
+        # need to add other keys
+    elif 'Key' in action:
+        x = str(x)[4:]
 
-
-
-
-
-
-x = mylist[i][1]
-value(x)
+        # change some of the names for pyautogui
+        if x == 'page_down':
+            x = 'pgdn'
+        elif x == 'page_up':
+            x = 'pgup'
+        print (x)
+        s.press(x)  
+        time.sleep(0.15)
+        # need to add other keys
+    elif 'Scroll' in action:  
+        print (add_action)
+        mouse.scroll(0,int(add_action))
+        time.sleep(0.7)
 
