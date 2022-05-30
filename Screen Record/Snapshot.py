@@ -48,4 +48,10 @@ with keyboard.Listener(on_press=on_press) as k_listener, \
 
 
 
+############## test ############
+x = s.locateCenterOnScreen('SAPLookUp.png')
+s.click(x)
+
+s.write('Users')
+
  

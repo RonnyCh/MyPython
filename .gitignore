@@ -21,7 +21,7 @@ TM1CSV
 *.sql
 *.pyc
 *.txt
-Capture.PNG
-RefreshData.png
-x.png
+*.png
 Flask/test.py
+
+Screen Record/test.py
