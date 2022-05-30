@@ -45,6 +45,7 @@ for i in range(len(mylist)):
     elif 'press' in action:
         
         mouse.press(Button.left)
+        time.sleep(0.2)
     elif 'release' in action:
         mouse.release(Button.left)
     elif 'Write' in action:

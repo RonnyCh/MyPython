@@ -23,5 +23,4 @@ TM1CSV
 *.txt
 *.png
 Flask/test.py
-
 Screen Record/test.py
