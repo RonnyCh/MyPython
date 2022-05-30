@@ -21,3 +21,7 @@ TM1CSV
 *.sql
 *.pyc
 *.txt
+Capture.PNG
+RefreshData.png
+x.png
+Flask/test.py
