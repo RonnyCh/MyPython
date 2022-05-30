@@ -43,16 +43,47 @@ def on_click(x, y, button, pressed):
 
 def on_press(key):
     try:
-        print ('Press Char',key.char)       
-        newlist.append(['Char',key.char,'','']) 
-    except:
-        print ('Press',key)    
-        newlist.append(['Key',key,'','']) 
-
-def on_release(key):
-    print ('Release',key)
-    newlist.append(['Release',key,'','']) 
+        mykey = key.char
+        action = 'Write'
         
+    except:
+        mykey = key
+        action = 'Key'
+              
+    newlist.append([action,mykey,'','']) 
+    print (action,key)
+    
+def on_release(key):
+######################################################## 
+####      Added some ctrl function, like
+####      ctrl a, ctrl c, ctrl v, ctrl f
+####      add more lines as required for ctrl
+########################################################
+
+
+    mykey = key
+    if 'x06' in str(mykey):
+         # capture Ctrl F
+        newlist.append(['Hot','Ctrl','f',''])
+        print ('Ctrl F')
+    elif 'x01' in str(mykey):
+         # capture Ctrl A
+        newlist.append(['Hot','Ctrl','a',''])
+        print ('Ctrl A')
+    elif 'x03' in str(mykey):
+         # capture Ctrl C
+        newlist.append(['Hot','Ctrl','c',''])
+        print ('Ctrl C')
+    elif 'x16' in str(mykey):
+         # capture Ctrl V
+        newlist.append(['Hot','Ctrl','v',''])
+        print ('Ctrl V')
+    else:
+        action = 'Release'
+        #newlist.append([action,mykey,'',''])
+        print ('Release',mykey)
+
+    
     # if users press esc, stop mouse recording as well as keyboard    
     if key == keyboard.Key.esc:
         m_listener.stop()  # stop mouse
@@ -70,63 +101,4 @@ df = pd.DataFrame(newlist)
 df.columns = ['Action','X','Y','ButtonOrScroll']
 
 df.to_csv(x,index=False)
-
-
-
-######################################################## 
-####      Replay , use pyautogui for keyboard
-####      Will prompt which file to open
-########################################################
-
-import pyautogui as s 
-import pandas as pd
-import time
-from pynput.mouse import Button, Controller
-
-x = s.prompt('Enter Filename to Replay')
-x = x + '.csv'
-
-
-df = pd.read_csv(x)
-mylist = df.values.tolist()
-mouse = Controller()
-
-
-for i in range(len(mylist)):
-    action = mylist[i][0]
-    x = mylist[i][1]
-    y = mylist[i][2]
-    add_action = mylist[i][3]
-
-    if 'Move' in action:
-        
-        mouse.position = (x,y)
-        time.sleep(0.01)
-    elif 'press' in action:
-        
-        mouse.press(Button.left)
-    elif 'release' in action:
-        mouse.release(Button.left)
-    elif 'Char' in action:
-        s.write(x)  
-        # need to add other keys
-    elif 'Key' in action:
-        x = str(x)[4:]
-
-        # change some of the names for pyautogui
-        if x == 'page_down':
-            x = 'pgdn'
-        elif x == 'page_up':
-            x = 'pgup'
-        elif x == 'ctrl_l':
-            x = 'ctrl'
-
-        print (x)
-        s.press(x)  
-        time.sleep(0.15)
-        # need to add other keys
-    elif 'Scroll' in action:  
-        print (add_action)
-        mouse.scroll(0,int(add_action))
-        time.sleep(0.7)
 
