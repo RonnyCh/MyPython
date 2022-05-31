@@ -3,13 +3,18 @@
 userid = 'u01224'
 username = 'matthew.howell'
 useremail = 'm.howell@laserclinics.com.au'
-usergroup = '1.png'   # this is finance group, change accordingly
+usergroup = '5.png'   # this is finance group, change accordingly
 supplierapproval = 'Yes'
+dbname = 'DRR'
 
 #################################
+
+
 import pyautogui as s
 import time
 
+
+start = time.time()
 ## Find SAP Look up Menu
 x = s.locateCenterOnScreen('SAP_lookup.png', confidence=0.9)
 
@@ -47,107 +52,6 @@ s.write(userid)
 time.sleep(0.2)
 s.press('enter')
 
-## If supplier approval not there, show it
-x = s.locateCenterOnScreen('SAP_supplierapproval.png', confidence=0.9)
-
-if x is None:
-    s.hotkey('alt','v')
-    time.sleep(0.5)
-    s.press('u')
-
-time.sleep(0.6)
-
-####################################################################
-#                  General Tab                                      
-####################################################################
-
-## general tab
-x = s.locateCenterOnScreen('generaltab.png', confidence=0.9) 
-s.moveTo(x[0],x[1],2)
-s.click()
-time.sleep(1)
-
-
-## username
-x = s.locateCenterOnScreen('username.png', confidence=0.9)  # no 5 is finance superuser
-s.moveTo(x[0],x[1],2)
-s.move(250,0)    # move right 10 pixels
-s.click()
-s.write(username,interval = 0.25)
-
-## email
-x = s.locateCenterOnScreen('email.png', confidence=0.9)  # no 5 is finance superuser
-s.moveTo(x[0],x[1],2)
-s.move(250,0)    # move right 10 pixels
-s.click()
-s.write(useremail,interval = 0.25)
-
-
-## Open User Group Panel
-x = s.locateCenterOnScreen('group.png', confidence=0.9)  # no 5 is finance superuser
-s.moveTo(x[0],x[1],2)
-s.move(420,0)    # move right 10 pixels
-s.click()
-time.sleep(1)
-
-## Assign Group to user
-x = s.locateCenterOnScreen(usergroup, confidence=0.9)  # no 5 is finance superuser
-s.moveTo(x[0],x[1],2)
-s.move(30,0)    # move right 10 pixels
-s.click()
-s.move(0,328)  # update button
-s.click(clicks=2)
-
-## set supplier approval status
-if supplierapproval == 'Yes':
-    x = s.locateCenterOnScreen('supplierapproval.png', confidence=0.9)  
-    s.moveTo(x[0],x[1],2)
-    s.move(100,0)    # move right 10 pixels
-    s.click()
-    s.press('up')
-    s.press('enter')
-    s.screenshot('DB1.png')
-
-####################################################################
-##### add codes to send email with screen shot once completed, 
-##### that would be cool!! 
-####################################################################
-
-
-####################################################################
-#                  Display Tab                                      
-####################################################################
-
-## diplay tab
-x = s.locateCenterOnScreen('display.png', confidence=0.9) 
-s.moveTo(x[0],x[1],2)
-s.click()
-time.sleep(1)
-
-## font
-x = s.locateCenterOnScreen('font.png', confidence=0.9) 
-s.moveTo(x[0],x[1],2)
-s.move(182,0)    # move right 10 pixels
-s.click()
-s.write('a') # font type ARIAL
-time.sleep(1)
-s.press('enter')
-
-## font size
-x = s.locateCenterOnScreen('fontsize.png', confidence=0.9) 
-s.moveTo(x[0],x[1],2)
-s.move(182,0)    # move right 10 pixels
-s.click()
-s.write('12')  # font size 10
-time.sleep(1)
-s.press('enter')
-
-
-
-
-
-
-
 
 ### check image errors before running the steps ###
 ### fucking pyautogui issue!!!   
@@ -155,8 +59,8 @@ s.press('enter')
 ### consisten and can be applied accross databases
 ###################################################
 
-myimages = ['SAP_name.png','companyname.png','choosecompany.png','filter.png',
-             'filtertable.png','capture.png']
+myimages = ['SAP_supplierapproval.png','generaltab.png','username.png','email.png','group.png',
+            'display.png']
 count = 0
 for i in myimages:
     x = s.locateCenterOnScreen(i, confidence=0.7)
@@ -168,15 +72,137 @@ for i in myimages:
         s.moveTo(x[0],x[1],1)
 
 if count != 0 :
-    print ('Sorry cant do it')
+    print ('IMAGE ERRORS!! CANT PROCEED')
+
+else:
+    #################################################################
+    #### if no errors, continue with the rest of the codes below ####
+    #################################################################
+
+    ## If supplier approval not there, show it
+    x = s.locateCenterOnScreen('SAP_supplierapproval.png', confidence=0.9)
+
+    if x is None:
+        s.hotkey('alt','v')
+        time.sleep(0.5)
+        s.press('u')
+        if x is None:
+            print ('issue, image error')
+
+    time.sleep(0.6)
+
+    ####################################################################
+    #                  General Tab                                      
+    ####################################################################
+
+    ## general tab
+    x = s.locateCenterOnScreen('generaltab.png', confidence=0.9) 
+    s.moveTo(x[0],x[1],2)
+    s.click()
+    time.sleep(1)
+
+
+    ## username
+    x = s.locateCenterOnScreen('username.png', confidence=0.9)  # no 5 is finance superuser
+    s.moveTo(x[0],x[1],2)
+    s.move(250,0)    # move right 10 pixels
+    s.click()
+    s.write(username,interval = 0.25)
+
+    ## email
+    x = s.locateCenterOnScreen('email.png', confidence=0.9)  # no 5 is finance superuser
+    s.moveTo(x[0],x[1],2)
+    s.move(250,0)    # move right 10 pixels
+    s.click()
+    s.write(useremail,interval = 0.25)
+
+
+    ## Open User Group Panel
+    x = s.locateCenterOnScreen('group.png', confidence=0.9)  # no 5 is finance superuser
+    s.moveTo(x[0],x[1],2)
+    s.move(420,0)    # move right 10 pixels
+    s.click()
+    time.sleep(1)
+
+    ## Assign Group to user
+    x = s.locateCenterOnScreen(usergroup, confidence=0.9)  # no 5 is finance superuser
+    s.moveTo(x[0],x[1],2)
+    s.move(30,0)    # move right 10 pixels
+    s.click()
+    x = s.locateCenterOnScreen('update.png', confidence=0.9) # update button
+    s.moveTo(x[0],x[1],2)
+    s.click(clicks=2)
+
+    ## set supplier approval status
+    if supplierapproval == 'Yes':
+        x = s.locateCenterOnScreen('supplierapproval.png', confidence=0.9)  
+        s.moveTo(x[0],x[1],2)
+        s.move(100,0)    # move right 10 pixels
+        s.click()
+        s.press('up')
+        s.press('enter')
+        s.screenshot('GeneralTab.png')
+
+    ####################################################################
+    ##### add codes to send email with screen shot once completed, 
+    ##### that would be cool!! 
+    ####################################################################
+
+
+    ####################################################################
+    #                  Display Tab                                      
+    ####################################################################
+
+    ## diplay tab
+    x = s.locateCenterOnScreen('display.png', confidence=0.9) 
+    s.moveTo(x[0],x[1],2)
+    s.click()
+    time.sleep(1)
+
+    ## font
+    x = s.locateCenterOnScreen('font.png', confidence=0.9) 
+    s.moveTo(x[0],x[1],2)
+    s.move(182,0)    # move right 10 pixels
+    s.click()
+    s.write('a') # font type ARIAL
+    time.sleep(1)
+    s.press('enter')
+
+    ## font size
+    x = s.locateCenterOnScreen('fontsize.png', confidence=0.9) 
+    s.moveTo(x[0],x[1],2)
+    s.move(182,0)    # move right 10 pixels
+    s.click()
+    s.write('12')  # font size 10
+    time.sleep(1)
+    s.press('enter')
+
+    s.screenshot('DisplayTab.png')
+
+    finish = time.time()
+    duration = finish - start
+    print (duration/60)
 
 
 
-####### best way to change database ##########
 
-dbname = '*TESTING* SKINSTI'
 
-x = s.locateCenterOnScreen('SAP_name.png', confidence=0.9) # click Ronny C shortcut to get list of databases
+
+
+
+
+
+###############################################################################################
+# best way to change database 
+# note issue is with images not found by pyautogui
+# known issue from my westpac days
+# need to find a way to get around this
+###############################################################################################
+
+
+dbname = 'DRR'
+
+x = s.locateCenterOnScreen('SAP_name.png', confidence=0.9) # click name Ronny C (shortcut to get list of databases)
 s.moveTo(x[0],x[1],2)
 s.click()
 time.sleep(1.5)
@@ -186,10 +212,43 @@ s.moveTo(x[0],x[1],2)
 s.click()
 time.sleep(1)
 
-x = s.locateCenterOnScreen('filtername.png', confidence=0.7)  # filter button
+x = s.locateCenterOnScreen('filtercompany.png', confidence=0.7)  # filter company
+
+
+# Field Rule *****
+# move to drop down box , go up (reset)
+# move to word contains, 9th row
 s.moveTo(x[0],x[1],2)
+s.move(143,1) # offset
 s.click()
-time.sleep(1)
+for i in range(1,16):
+    s.press('up')
+for i in range(1,9):
+    s.press('down')
+s.press('enter')
+
+# Field Value *****
+s.moveTo(x[0],x[1],2)
+s.move(281,1) # offset
+s.click(clicks = 2)
+s.write(dbname) # type search word
+x = s.locateCenterOnScreen('filterword.png')  # filter button
+s.moveTo(x[0],x[1],2)
+s.click(clicks=4,interval=0.5)
+
+
+x = s.locateCenterOnScreen('companyname.png',confidence=0.9)  # filter choose company
+s.moveTo(x[0],x[1],2)
+s.move(0,20,1)
+s.click(clicks=4,interval=0.5)
+
+###############################################################################################
+
+
+
+
+
+
 
 
 
