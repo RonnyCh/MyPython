@@ -59,7 +59,7 @@ s.press('enter')
 ### consisten and can be applied accross databases
 ###################################################
 
-myimages = ['SAP_supplierapproval.png','generaltab.png','username.png','email.png','group.png',
+myimages = ['generaltab.png','username.png','email.png','group.png',
             'display.png']
 count = 0
 for i in myimages:
@@ -240,9 +240,44 @@ s.click(clicks=4,interval=0.5)
 x = s.locateCenterOnScreen('companyname.png',confidence=0.9)  # filter choose company
 s.moveTo(x[0],x[1],2)
 s.move(0,20,1)
-s.click(clicks=4,interval=0.5)
+s.click(clicks=6,interval=0.2)
 
 ###############################################################################################
+#  Wait until database is ready
+###############################################################################################
+
+
+import pyautogui as s
+start = time.time()
+while True:
+    x = s.locateCenterOnScreen('SAP_menu.png', confidence=0.9)
+    
+    if x is not None:   # found the pic
+        print ('found it')
+        s.moveTo(x[0],x[1],0.5)
+        s.click()
+        break
+    else:  # do timer to stop searching after 10 seconds
+        timer = time.time() - start
+        print (timer)
+        if timer > 60:
+            s.alert("Sorry can't find the picture on your screen")
+            break
+
+
+###############################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
