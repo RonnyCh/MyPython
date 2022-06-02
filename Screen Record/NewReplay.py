@@ -45,10 +45,18 @@ for i in range(len(mylist)):
         time.sleep(duration)
     elif 'press' in action:
         
-        mouse.press(Button.left)
+        if 'left' in str(add_action):
+            mouse.press(Button.left)
+        else:
+            mouse.press(Button.right)
+
         time.sleep(duration)
     elif 'release' in action:
-        mouse.release(Button.left)
+        if 'left' in str(add_action):
+            mouse.release(Button.left)
+        else:
+            mouse.release(Button.right)
+
     elif 'Write' in action:
         s.write(x)  
         # need to add other keys

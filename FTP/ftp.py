@@ -9,8 +9,8 @@ ftp = FTP_TLS('ccapaprod.planning-analytics.ibmcloud.com')
 ftp.login(user='FileShare', passwd='3KThy8DJpk6RWH')
 ftp.prot_p()    # you have to run this otherwise won't work
 # change dir
-#ftp.cwd("/prod/LCA/XeroImport/XeroExport/dist/api_output")
-ftp.cwd("/prod/LCA/Upload Templates")
+ftp.cwd("/prod/LCA/XeroImport/XeroExport/dist/api_output")
+#ftp.cwd("/prod/LCA/Upload Templates")
 # list files
 ftp.dir()
 ftp.quit()

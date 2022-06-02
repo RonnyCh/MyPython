@@ -20,38 +20,161 @@ import os
 
 
 ###########################################################################################################
-def findimage(number, mylimit,acc = 0.99):
+def findimage(image, mylimit,acc = 0.99):
     # chdir to snapshot so images can be picked
     os.chdir(r'C:\Users\r.christianto\MyPython\Screen Record\Snapshot')
     # put new images here
-    myimage =  ['SAP_name.png','filter.png','clear.png','filtercompany.png','filterword.png',
-                'companyname.png','databasewindow.png','SAP_lookup.png','SAP_Menu.png','SAP_lookup.png',
-                'SAP_user.png','SAP_binocular.png','SAP_supplierapproval.png','generaltab.png','username.png',
-                'email.png','group.png','1.png','5.png','supplierapproval.png',
-                'display.png','font.png','fontsize.png','DisplayTab.png']
- 
     
     start = time.time()
       
     # try to find image within the timer given, otherwise print errors
     while True:
-        x = s.locateCenterOnScreen(myimage[number], confidence = acc)
+        x = s.locateCenterOnScreen(image, confidence = acc)
         #x = s.locateCenterOnScreen(myimage[number])
         
         if x is not None:   # found the pic
-            print ('Move to this ', myimage[number])
+            print ('Executing... ', image)
             s.moveTo(x[0],x[1],1.5)
             return x
             break
         else:  # do timer to stop searching after 10 seconds
             timer = time.time() - start
-            print (timer)
+            #print (timer)
             if timer > mylimit:
-                print ('cant find this picture',myimage[number],'index >>',number)
+                print ('Abort due to missing ',image)
                 return x
                 break
 ###########################################################################################################
 
+
+myimages =  ['SAP_name.png','filter.png','clear.png','Rule.png','value.png','filterword.png','companyname.png',
+            'SAP_Menu.png','SAP_lookup.png','SAP_user.png','SAP_binocular.png','generaltab.png','username.png',
+            'email.png','group.png',
+            'filtercompany.png','databasewindow.png','SAP_lookup.png','SAP_supplierapproval.png',
+            '1.png','5.png','supplierapproval.png',
+            'display.png','font.png','fontsize.png','DisplayTab.png']
+
+# below codes categorise typical actions against images
+# add more as you find new scenarios
+# you just need to assign each image to each action/category below
+for index,image in enumerate(myimages):
+
+    # action 1, find and click
+    if index in (0,1,2,5,9,11,14):
+       
+
+        if index == 5:
+            clicks = 2
+            myconfidence = 0.99
+        elif index == 9:
+            clicks = 1
+            myconfidence = 0.9
+        else:
+            clicks = 1
+            myconfidence = 0.99
+
+        findme = findimage(image,10,myconfidence)
+        if findme is None:
+            break
+
+        s.click(clicks = clicks)
+        time.sleep(1.5)
+
+    # action 2, find, click and press
+    elif index == 3:
+        findme = findimage(image,10)
+        if findme is None:
+            break
+
+        s.click()
+        
+        for i in range(1,16):
+            s.press('up')
+        
+        for i in range(1,9):
+            s.press('down')
+        s.press('enter')
+
+        time.sleep(1.5)
+
+    # action 3, find, click and write
+    elif index in (4,10):
+        findme = findimage(image,10,0.9)
+        if findme is None:
+            break
+
+        if index == 4:
+            s.click(clicks=2)
+            s.write('UKSL')
+
+        
+        if index == 10:
+            s.write(userid)
+            s.press('enter')
+
+
+    # action 4, find , offset and click
+    elif index in (6,12,13):
+        if index == 6:
+            myx = 0
+            myy = 20
+            myclick = 6
+            myconfidence = 0.9
+            sleep = 10 # give database more time
+        elif index in (12,13):
+            myx = 250
+            myy = 0
+            myclick = 1
+            myconfidence = 0.9
+            sleep = 1 # give database more time
+
+        else:
+            myx = 0
+            myy = 20
+            myclick = 1
+            myconfidence = 0.9
+            sleep = 1
+        
+        findme = findimage(image,10,myconfidence) # companyname
+        if findme is None:
+            break
+
+        s.move(myx,myy,1) # offset
+        s.click(clicks=myclick,interval=0.2)
+        time.sleep(sleep)
+
+    # action 5, wait screen to refresh until the picture can be found
+    elif index == 7:
+        findme = findimage(image,180)
+        if findme is None:
+            break
+        else:
+            print ('Refresh finish, continue .....')
+
+    # action 6, search twice....after unhiding
+    if index == 8 :
+        findme = findimage(image,10)
+
+        if findme is None:
+            findme = findimage('SAP_Menu.png',10)
+            s.click()
+
+        # search again
+        findme = findimage(image,10)
+        if findme is None:
+            break
+
+        # write    
+        s.click()
+        s.write('users')    
+
+
+
+########################## tested up to the above #################################
+
+
+x = s.locateCenterOnScreen('generaltab.png',confidence=0.9)
+s.moveTo(x[0],x[1],1.5)
 
 
 findimage(0,10) # click name Ronny C (shortcut to get list of databases)
