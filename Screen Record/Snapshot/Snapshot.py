@@ -4,7 +4,7 @@
 ####      This code will take snapshot
 ####      You have to click two points to create a frame 
 ####      Press SHIFT for Snapshot
-####      Press ALT for working out delta x and delta y
+####      Press ALT for working out delta x and delta ysnap
 ####      It will print on command prompt
 ##################################################################
 

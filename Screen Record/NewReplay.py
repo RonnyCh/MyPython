@@ -37,15 +37,16 @@ for i in range(len(mylist)):
     x = mylist[i][1]
     y = mylist[i][2]
     add_action = mylist[i][3]
+    duration = mylist[i][5]
 
     if 'Move' in action:
         
         mouse.position = (x,y)
-        time.sleep(0.01)
+        time.sleep(duration)
     elif 'press' in action:
         
         mouse.press(Button.left)
-        time.sleep(0.2)
+        time.sleep(duration)
     elif 'release' in action:
         mouse.release(Button.left)
     elif 'Write' in action:
@@ -57,16 +58,16 @@ for i in range(len(mylist)):
         
         if x != 'ctrl' and x != 'esc':
             s.press(x)  
-            time.sleep(0.15)
+            time.sleep(duration)
     elif 'hot' in action.lower():
         s.hotkey('Ctrl',y)
-        time.sleep(1)
+        time.sleep(duration)
         # need to add other keys
 
     elif 'Scroll' in action:  
         print (add_action)
         mouse.scroll(0,int(add_action))
-        time.sleep(0.7)
+        time.sleep(duration)
 
 
 
