@@ -5,11 +5,14 @@
 ####      Will prompt which file to open
 ########################################################
 
+import os
 import pyautogui as s 
 import pandas as pd
 import time
 from pynput.mouse import Button, Controller
 
+
+os.chdir(r'C:\Users\r.christianto\MyPython\XeroAPI')
 
 ##### def to change name from keyboard to pyautugui ####
 def changename(name):

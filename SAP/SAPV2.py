@@ -22,7 +22,7 @@ import os
 ###########################################################################################################
 def findimage(image, mylimit,acc = 0.99):
     # chdir to snapshot so images can be picked
-    os.chdir(r'C:\Users\r.christianto\MyPython\Screen Record\Snapshot')
+    os.chdir(r'C:\Users\r.christianto\MyPython\SAP\Snapshot')
     # put new images here
     
     start = time.time()
