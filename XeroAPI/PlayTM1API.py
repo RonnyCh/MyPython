@@ -11,8 +11,11 @@ import pandas as pd
 import time
 from pynput.mouse import Button, Controller
 
-
+# change dir and open excel
 os.chdir(r'C:\Users\r.christianto\MyPython\XeroAPI')
+os.system("start EXCEL.EXE TM1API.xlsm")
+time.sleep(15)
+
 
 ##### def to change name from keyboard to pyautugui ####
 def changename(name):

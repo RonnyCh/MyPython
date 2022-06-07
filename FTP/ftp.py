@@ -29,7 +29,7 @@ with open(filename, "wb") as file:
 
 ########## upload the file to FTP Server ###############
 ########## finallly working ######################
-filename = 'NonFinancial Budget UploadTest.xlsx'
+filename = 'TrialBalance_2022-05-31_2022-05-31.txt'
 #ftp.set_debuglevel(2)
 ftplib._SSLSocket = None   #### this is key to make upload work!!!! (from reza code)
 with open(filename, "rb") as file:

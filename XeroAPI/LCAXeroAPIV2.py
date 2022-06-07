@@ -145,6 +145,125 @@ def amt(section,mtd,ytd):
                 return mtd
             else:
                 return ytd
+
+
+
+
+########### REZA Code - Org #######################
+def XeroOrgFile(access_tokens, xero_tenant_id):
+    try:
+        # get organisation details and add to file
+        ExportFileOrganisations = 'Org.txt'
+        get_url = 'https://api.xero.com/api.xro/2.0/Organisation'
+        response = requests.get(get_url,
+                                headers={
+                                    'Authorization': 'Bearer ' + access_token,
+                                    'Xero-tenant-id': xero_tenant_id,
+                                    'Accept': 'application/json'
+                                })
+        json_response = response.json()["Organisations"]
+
+        # if file doesnt exist, created it and then write header
+        if not os.path.exists(ExportFileOrganisations):
+            with open(ExportFileOrganisations, "w", newline="", encoding="utf-8") as csvfile:
+                f = csv.writer(csvfile, delimiter=";")
+                f.writerow(
+                    ["Name", "LegalName", "PaysTax", "Version", "OrganisationType", "BaseCurrency", "CountryCode","IsDemoCompany","OrganisationStatus","RegistrationNumber","TaxNumber","FinancialYearEndDay","FinancialYearEndMonth"
+                        ,"SalesTaxBasis","SalesTaxPeriod","DefaultSalesTax","DefaultPurchasesTax","PeriodLockDate","CreatedDateUTC","OrganisationEntityType","Timezone","ShortCode","OrganisationId","Edition","Class"])
+        # if it exists, append row (use "a+" to append)
+        if os.path.exists(ExportFileOrganisations):
+            with open(ExportFileOrganisations, "a+", newline="", encoding="utf-8") as csvfile:
+                f = csv.writer(csvfile, delimiter=";")
+                for organisation in json_response:
+                    return_org = organisation.get("Name")
+                    f.writerow([
+                        organisation.get("Name")
+                        , organisation.get("LegalName")
+                        , organisation.get("PaysTax")
+                        , organisation.get("Version")
+                        , organisation.get("OrganisationType")
+                        , organisation.get("BaseCurrency")
+                        , organisation.get("CountryCode")
+                        , organisation.get("IsDemoCompany")
+                        , organisation.get("OrganisationStatus")
+                        , organisation.get("RegistrationNumber")
+                        , organisation.get("TaxNumber")
+                        , organisation.get("FinancialYearEndDay")
+                        , organisation.get("FinancialYearEndMonth")
+                        , organisation.get("SalesTaxBasis")
+                        , organisation.get("SalesTaxPeriod")
+                        , organisation.get("DefaultSalesTax")
+                        , organisation.get("DefaultPurchasesTax")
+                        , organisation.get("PeriodLockDate")
+                        , organisation.get("CreatedDateUTC")
+                        , organisation.get("OrganisationEntityType")
+                        , organisation.get("Timezone")
+                        , organisation.get("ShortCode")
+                        , organisation.get("OrganisationId")
+                        , organisation.get("Edition")
+                        , organisation.get("Class")
+                    ])
+
+        #status = 'Organisation for ' + return_org + ' added into text file'
+        #return status
+    except:
+        print ("Error Adding Org for " + return_org)
+    ###################################################
+
+########### REZA Code - Acct #######################
+
+
+def XeroAcct(access_token, xero_tenant_id, xero_organisation_name):
+    try:
+        ExportFileAccounts = 'Acct.txt'
+        get_url = 'https://api.xero.com/api.xro/2.0/Accounts'
+        response = requests.get(get_url,
+                            headers={
+                                'Authorization': 'Bearer ' + access_token,
+                                'Xero-tenant-id': xero_tenant_id,
+                                'Accept': 'application/json'
+                            })
+        json_response = response.json()["Accounts"]
+
+        # if file doesnt exist, created it and then write header
+        if not os.path.exists(ExportFileAccounts):
+            with open(ExportFileAccounts, "w", newline="", encoding="utf-8") as csvfile:
+                f = csv.writer(csvfile, delimiter=";")
+                f.writerow(
+                    ["XeroOrganisation","Code", "Name","Type","BankAccountNumber","Status","Description","BankAccountType","CurrencyCode","TaxType","EnablePaymentsToAccount"
+                    ,"ShowInExpenseClaims","AccountID","Class","SystemAccount","ReportingCode","ReportingCodeName","HasAttachments","UpdatedDateUTC"])
+        # if it exists, append row (use "a+" to append)
+        if os.path.exists(ExportFileAccounts):
+            with open(ExportFileAccounts, "a+", newline="", encoding="utf-8") as csvfile:
+                f = csv.writer(csvfile, delimiter=";")
+                for account in json_response:
+                    f.writerow([
+                        xero_organisation_name
+                        , account.get("Code")
+                        , account.get("Name")
+                        , account.get("Type")
+                        , account.get("BankAccountNumber")
+                        , account.get("Status")
+                        , account.get("Description")
+                        , account.get("BankAccountType")
+                        , account.get("CurrencyCode")
+                        , account.get("TaxType")
+                        , account.get("EnablePaymentsToAccount")
+                        , account.get("ShowInExpenseClaims")
+                        , account.get("AccountID")
+                        , account.get("Class")
+                        , account.get("SystemAccount")
+                        , account.get("ReportingCode")
+                        , account.get("ReportingCodeName")
+                        , account.get("HasAttachments")
+                        , account.get("UpdatedDateUTC")
+                    ])
+        #status = 'Account for ' + xero_organisation_name + ' added into text file'
+        #return status
+    except:
+        print ("Error Adding Acct for " + xero_organisation_name)
+
+
 ################################################
 
 ############ get list of tenants ################
@@ -158,21 +277,14 @@ myjson = json.loads(response.text)
 
 mytenants = []
 for i in myjson:
-    mytenants.append(i['tenantId'])
+    id = i['tenantId']
+    name = i['tenantName']
+    mytenants.append([id,name])
 ###################################################
 
 
 # let's test just 2 clinics  , you can delete this code later
-#mytenants = mytenants[54:60]
-
-
-############ put parameter for month ##############
-########## Change URL for TRIAL BALANCE ###########
-
-
-url = 'https://api.xero.com/api.xro/2.0/Reports/TrialBalance?date='+mymonth+'&paymentsOnly=false'
-
-###################################################
+mytenants = mytenants[1:10]
 
 
 ######### Get JSON API for each tenant ############
@@ -180,11 +292,18 @@ url = 'https://api.xero.com/api.xro/2.0/Reports/TrialBalance?date='+mymonth+'&pa
 total = len(mytenants)
 
 for index,mytenant in enumerate(mytenants):
+
+####### RUN REZA CODES FOR ACCTS AND ORGS ########
+    XeroOrgFile(access_token, mytenant[0])
+    XeroAcct(access_token, tenant[0], mytenant[1])
+
+########## URL FOR TRIAL BALANCE #################
+    url = 'https://api.xero.com/api.xro/2.0/Reports/TrialBalance?date='+mymonth+'&paymentsOnly=false'
     response = requests.get(url,
             headers={
            'Authorization' : 'Bearer '+access_token,
            'Accept' : 'application/json',
-           'Xero-tenant-id' : mytenant})
+           'Xero-tenant-id' : mytenant[0]})
     data = json.loads(response.text)
 ###################################################
 
