@@ -58,3 +58,4 @@ mydf.to_sql('xero_trialbalance', engine, if_exists = 'replace', index=False)
 
 ##########################################################################################################################
 
+print ('MYSQL TRIAL BALANCE UPDATED!!!!')
