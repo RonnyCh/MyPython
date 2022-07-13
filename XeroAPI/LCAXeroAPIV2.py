@@ -8,6 +8,9 @@ import json
 import pandas as pd
 import base64
 import warnings
+import csv
+
+
 # turn off pandas warning
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -147,13 +150,11 @@ def amt(section,mtd,ytd):
                 return ytd
 
 
-
-
 ########### REZA Code - Org #######################
 def XeroOrgFile(access_tokens, xero_tenant_id):
     try:
         # get organisation details and add to file
-        ExportFileOrganisations = 'Org.txt'
+        ExportFileOrganisations = 'Organisations.txt'
         get_url = 'https://api.xero.com/api.xro/2.0/Organisation'
         response = requests.get(get_url,
                                 headers={
@@ -207,7 +208,7 @@ def XeroOrgFile(access_tokens, xero_tenant_id):
         #status = 'Organisation for ' + return_org + ' added into text file'
         #return status
     except:
-        print ("Error Adding Org for " + return_org)
+        return "Error"
     ###################################################
 
 ########### REZA Code - Acct #######################
@@ -215,7 +216,7 @@ def XeroOrgFile(access_tokens, xero_tenant_id):
 
 def XeroAcct(access_token, xero_tenant_id, xero_organisation_name):
     try:
-        ExportFileAccounts = 'Acct.txt'
+        ExportFileAccounts = 'Accounts.txt'
         get_url = 'https://api.xero.com/api.xro/2.0/Accounts'
         response = requests.get(get_url,
                             headers={
@@ -261,7 +262,7 @@ def XeroAcct(access_token, xero_tenant_id, xero_organisation_name):
         #status = 'Account for ' + xero_organisation_name + ' added into text file'
         #return status
     except:
-        print ("Error Adding Acct for " + xero_organisation_name)
+        return "Error"
 
 
 ################################################
@@ -284,7 +285,7 @@ for i in myjson:
 
 
 # let's test just 2 clinics  , you can delete this code later
-mytenants = mytenants[1:10]
+#mytenants = mytenants[1:10]
 
 
 ######### Get JSON API for each tenant ############
@@ -295,7 +296,7 @@ for index,mytenant in enumerate(mytenants):
 
 ####### RUN REZA CODES FOR ACCTS AND ORGS ########
     XeroOrgFile(access_token, mytenant[0])
-    XeroAcct(access_token, tenant[0], mytenant[1])
+    XeroAcct(access_token, mytenant[0], mytenant[1])
 
 ########## URL FOR TRIAL BALANCE #################
     url = 'https://api.xero.com/api.xro/2.0/Reports/TrialBalance?date='+mymonth+'&paymentsOnly=false'
@@ -368,9 +369,6 @@ for index,mytenant in enumerate(mytenants):
         df['YTD'] =  df['YTD Dr'] - df['YTD Cr']
         df['Amount'] = df.apply(lambda x:amt(x.Section,x.MTD,x.YTD),axis=1)
 
-       
-
-
         # final dataframe
         df = df[['GBL_Period','XRO_Clinic','Section','Desc','XRO_Account','Description','Dr','Cr','YTD Dr','YTD Cr','Amount']]
         #df.to_csv(clinicname+'.csv',index=False)
@@ -391,3 +389,56 @@ tm1 = final[['XRO_Clinic','XRO_Account','Amount']]
 tm1.to_csv('TM1.csv',index=False)
 final.to_csv('Xero.csv',index=False)
 print ("Process Completed!!!!!!!")
+
+
+########## convert my TB to Reza text format for FTP ##############
+
+filename = 'TrialBalance_' + mymonth + '_' + mymonth + '.txt'
+ftpTB = final[['GBL_Period', 'XRO_Clinic', 'Section', 'XRO_Account',
+       'Description', 'Dr', 'Cr', 'YTD Dr', 'YTD Cr']]
+ftpTB.columns = ['Date','XeroOrganisation','SectionName','AccountCode','AccountName','Debit','Credit','YTD Debit','YTD Credit']
+ftpTB.to_csv(filename,sep=';',index=False)
+
+
+
+################# FTP Upload #################
+import os
+import ftplib
+from ftplib import FTP_TLS
+
+ftp = FTP_TLS('ccapaprod.planning-analytics.ibmcloud.com')
+ftp.login(user='FileShare', passwd='3KThy8DJpk6RWH')
+ftp.prot_p()    # you have to run this otherwise won't work
+# change remote directory
+ftp.cwd("/prod/LCA/XeroImport/XeroExport/dist/api_output")
+
+
+
+
+########## upload the file to FTP Server ###############
+########## finallly working ######################
+trialbalance = 'TrialBalance_2022-05-31_2022-05-31.txt'
+#ftp.set_debuglevel(2)
+ftplib._SSLSocket = None   #### this is key to make upload work!!!! (from reza code)
+with open(filename, "rb") as file:
+    ftp.prot_p()    # you have to run this otherwise won't work
+    # Command for Uploading the file "STOR filename"
+    ftp.storbinary(f"STOR {filename}", file,1024)
+
+
+
+for filename in (trialbalance,'Accounts.txt','Organisations.txt'):
+    
+    try :
+        ftplib._SSLSocket = None   #### this is key to make upload work!!!! (from reza code)
+        with open(filename, "rb") as file:   #upload Trial Balance
+            ftp.prot_p()    # you have to run this otherwise won't work
+            # Command for Uploading the file "STOR filename"
+            ftp.storbinary(f"STOR {filename}", file,1024)
+            print ('This file loaded >> ',filename)
+    except:
+        print ('Error uploading this >> ',filename)
+
+ftp.quit()
+
+

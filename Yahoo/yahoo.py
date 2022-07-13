@@ -34,7 +34,7 @@ def download():
 
     ############ pick up data from yahoo finance (last 120 days) #############################
 
-    start =  datetime.date.today() + datetime.timedelta(days=-31)
+    start =  datetime.date.today() + datetime.timedelta(days=-180)
     end = datetime.date.today() + datetime.timedelta(days=1)
     data = yf.download(mystring, start=start, end=end, group_by="ticker")
 
@@ -50,7 +50,7 @@ def download():
     for i in mylist:
         df = data[i]     # new one using Yfinance
         df['Code'] = i
-        mytbl = mytbl.append(df)
+        mytbl = pd.concat([mytbl,df])
 
     # export csv
     mytbl.dropna(inplace=True)
