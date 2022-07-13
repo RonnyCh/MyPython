@@ -14,7 +14,7 @@ from pynput.mouse import Button, Controller
 # change dir and open excel
 os.chdir(r'C:\Users\r.christianto\MyPython\XeroAPI')
 os.system("start EXCEL.EXE TM1API.xlsm")
-time.sleep(15)
+time.sleep(20)
 
 
 ##### def to change name from keyboard to pyautugui ####
@@ -30,8 +30,8 @@ def changename(name):
     return name
 #########################################################
 
-
-df = pd.read_csv('Recording.csv')
+os.chdir(r'C:\Users\r.christianto\MyPython\Screen Record')
+df = pd.read_csv('TM1API.csv')
 mylist = df.values.tolist()
 mouse = Controller()
 

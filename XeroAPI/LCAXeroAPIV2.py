@@ -9,16 +9,34 @@ import pandas as pd
 import base64
 import warnings
 import csv
-
+from datetime import datetime, timedelta
+import calendar
 
 # turn off pandas warning
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-os.chdir(r'C:\Users\r.christianto\MyPython\XeroAPI')
+os.chdir(r'C:\Users\r.christianto\MyPython\XeroAPI\TBDownload')
 
-#mymonth = input('YYYY-MM-DD  >>') #### setup your date here before running #######
 
-mymonth = '2022-05-31'
+##### setup your date here before running #######
+
+
+x = datetime.now()
+yr = x.year
+mth = str(x.month - 1)
+day = calendar.monthrange(x.year, x.month - 1)
+day = str(day[1])
+
+if len(mth) == 1:
+    mth = '0' + str(mth)
+else:
+    mth = str(mth)
+
+mymonth = str(x.year) + '-' + mth + '-' + day
+
+print ("Ready to run ",mymonth)
+
+####################################################################################
 
 client_id = 'B628C81B8827482AAC0E3E7BA73676F2'     # LCA REZA API
 client_secret = 'fUr9qANQNTne6sXMaCoXzGzHty3i1dE2sVJe8iWFAUDUpehe'    # Reza API
@@ -388,7 +406,6 @@ tm1 = final[['XRO_Clinic','XRO_Account','Amount']]
 #tm1['GBL_Reporting_Currency'] = 'Local'
 tm1.to_csv('TM1.csv',index=False)
 final.to_csv('Xero.csv',index=False)
-print ("Process Completed!!!!!!!")
 
 
 ########## convert my TB to Reza text format for FTP ##############
@@ -399,7 +416,9 @@ ftpTB = final[['GBL_Period', 'XRO_Clinic', 'Section', 'XRO_Account',
 ftpTB.columns = ['Date','XeroOrganisation','SectionName','AccountCode','AccountName','Debit','Credit','YTD Debit','YTD Credit']
 ftpTB.to_csv(filename,sep=';',index=False)
 
+print ("Process Completed!!!!!!!")
 
+print ('Starting FTP Upload......')
 
 ################# FTP Upload #################
 import os
@@ -417,14 +436,13 @@ ftp.cwd("/prod/LCA/XeroImport/XeroExport/dist/api_output")
 
 ########## upload the file to FTP Server ###############
 ########## finallly working ######################
-trialbalance = 'TrialBalance_2022-05-31_2022-05-31.txt'
+trialbalance = filename
 #ftp.set_debuglevel(2)
-ftplib._SSLSocket = None   #### this is key to make upload work!!!! (from reza code)
-with open(filename, "rb") as file:
-    ftp.prot_p()    # you have to run this otherwise won't work
-    # Command for Uploading the file "STOR filename"
-    ftp.storbinary(f"STOR {filename}", file,1024)
-
+##ftplib._SSLSocket = None   #### this is key to make upload work!!!! (from reza code)
+##with open(filename, "rb") as file:
+##    ftp.prot_p()    # you have to run this otherwise won't work
+##    # Command for Uploading the file "STOR filename"
+##    ftp.storbinary(f"STOR {filename}", file,1024)
 
 
 for filename in (trialbalance,'Accounts.txt','Organisations.txt'):

@@ -23,5 +23,7 @@ Bank
 *.pyc
 *.txt
 *.png
+*.cma
 Flask/test.py
 Screen Record/test.py
+*.mp4

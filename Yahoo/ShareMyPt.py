@@ -9,7 +9,7 @@ def mypt():
     mytbl = pd.read_csv('Yahoo.csv')
 
 
-    list = ['A200.AX','MGR.AX','BHP.AX','RMD.AX']
+    list = ['A200.AX','IAG.AX', 'WOW.AX','BHP.AX','RMD.AX','WDS.AX']
 
 
     plt.figure(figsize=(10, 10))
